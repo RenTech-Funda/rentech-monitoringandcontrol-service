@@ -1,5 +1,6 @@
 package com.floweytech.agrotrack.monitoringservice.interfaces.rest.controllers;
 
+import com.floweytech.agrotrack.monitoringservice.application.internal.commandservices.WeatherEnvironmentReadingService;
 import com.floweytech.agrotrack.monitoringservice.domain.model.queries.GetAllEnvironmentReadingsByPlotIdQuery;
 import com.floweytech.agrotrack.monitoringservice.domain.model.queries.GetAllEnvironmentReadingsQuery;
 import com.floweytech.agrotrack.monitoringservice.domain.model.queries.GetEnvironmentReadingByIdQuery;
@@ -34,11 +35,14 @@ public class EnvironmentReadingsController {
 
     private final EnvironmentReadingCommandService environmentReadingCommandService;
     private final EnvironmentReadingQueryService environmentReadingQueryService;
+    private final WeatherEnvironmentReadingService weatherEnvironmentReadingService;
 
     public EnvironmentReadingsController(EnvironmentReadingCommandService environmentReadingCommandService,
-                                         EnvironmentReadingQueryService environmentReadingQueryService) {
+                                         EnvironmentReadingQueryService environmentReadingQueryService,
+                                         WeatherEnvironmentReadingService weatherEnvironmentReadingService) {
         this.environmentReadingCommandService = environmentReadingCommandService;
         this.environmentReadingQueryService = environmentReadingQueryService;
+        this.weatherEnvironmentReadingService = weatherEnvironmentReadingService;
     }
 
     @PostMapping
@@ -58,6 +62,21 @@ public class EnvironmentReadingsController {
 
         var resource2 = EnvironmentReadingResourceFromEntityAssembler.toResourceFromEntity(environmentReading.get());
         return new ResponseEntity<>(resource2, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/weather/plot/{plotId}")
+    @Operation(summary = "Import current weather readings for a plot")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Weather readings imported successfully"),
+            @ApiResponse(responseCode = "400", description = "Plot location could not be resolved or weather data is invalid")
+    })
+    public ResponseEntity<List<EnvironmentReadingResource>> importCurrentWeatherForPlot(@PathVariable Long plotId) {
+        var readings = weatherEnvironmentReadingService.importCurrentWeatherForPlot(plotId);
+        var resources = readings.stream()
+                .map(EnvironmentReadingResourceFromEntityAssembler::toResourceFromEntity)
+                .toList();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(resources);
     }
 
     @GetMapping
