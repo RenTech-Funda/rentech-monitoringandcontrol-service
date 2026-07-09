@@ -68,7 +68,8 @@ public class EnvironmentReadingsController {
     @Operation(summary = "Import current weather readings for a plot")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Weather readings imported successfully"),
-            @ApiResponse(responseCode = "400", description = "Plot location could not be resolved or weather data is invalid")
+            @ApiResponse(responseCode = "400", description = "Plot location could not be resolved or weather data is invalid"),
+            @ApiResponse(responseCode = "503", description = "External weather service is temporarily unavailable")
     })
     public ResponseEntity<List<EnvironmentReadingResource>> importCurrentWeatherForPlot(@PathVariable Long plotId) {
         var readings = weatherEnvironmentReadingService.importCurrentWeatherForPlot(plotId);
