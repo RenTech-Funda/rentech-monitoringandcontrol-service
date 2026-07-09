@@ -1,5 +1,7 @@
 package com.floweytech.agrotrack.monitoringservice.shared.interfaces.rest;
 
+import com.floweytech.agrotrack.monitoringservice.shared.domain.model.exceptions.ExternalWeatherServiceUnavailableException;
+import com.floweytech.agrotrack.monitoringservice.shared.domain.model.exceptions.WeatherServiceConfigurationException;
 import com.floweytech.agrotrack.monitoringservice.shared.interfaces.rest.resources.MessageResource;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.context.MessageSource;
@@ -32,6 +34,22 @@ public class GlobalExceptionHandler {
     public ResponseEntity<MessageResource> handleIllegalArgument(IllegalArgumentException ex){
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
+                .body(new MessageResource(ex.getMessage()));
+    }
+
+    @ExceptionHandler(ExternalWeatherServiceUnavailableException.class)
+    public ResponseEntity<MessageResource> handleExternalWeatherServiceUnavailable(
+            ExternalWeatherServiceUnavailableException ex) {
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(new MessageResource(ex.getMessage()));
+    }
+
+    @ExceptionHandler(WeatherServiceConfigurationException.class)
+    public ResponseEntity<MessageResource> handleWeatherServiceConfiguration(
+            WeatherServiceConfigurationException ex) {
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .body(new MessageResource(ex.getMessage()));
     }
 
