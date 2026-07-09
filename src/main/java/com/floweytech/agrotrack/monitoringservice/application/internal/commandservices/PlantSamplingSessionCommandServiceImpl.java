@@ -5,20 +5,28 @@ import com.floweytech.agrotrack.monitoringservice.domain.model.commands.AddPlant
 import com.floweytech.agrotrack.monitoringservice.domain.model.commands.CreatePlantSamplingSessionCommand;
 import com.floweytech.agrotrack.monitoringservice.domain.model.commands.RemovePlantObservationCommand;
 import com.floweytech.agrotrack.monitoringservice.domain.model.commands.UpdatePlantObservationCommand;
+import com.floweytech.agrotrack.monitoringservice.domain.model.entities.PlantObservation;
 import com.floweytech.agrotrack.monitoringservice.domain.services.PlantSamplingSessionCommandService;
+import com.floweytech.agrotrack.monitoringservice.infrastructure.persistence.jpa.PlantObservationRepository;
 import com.floweytech.agrotrack.monitoringservice.infrastructure.persistence.jpa.PlantSamplingSessionRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PlantSamplingSessionCommandServiceImpl implements PlantSamplingSessionCommandService {
 
     private final PlantSamplingSessionRepository repository;
+    private final PlantObservationRepository observationRepository;
 
-    public PlantSamplingSessionCommandServiceImpl(PlantSamplingSessionRepository repository) {
+    public PlantSamplingSessionCommandServiceImpl(
+            PlantSamplingSessionRepository repository,
+            PlantObservationRepository observationRepository) {
         this.repository = repository;
+        this.observationRepository = observationRepository;
     }
 
     @Override
+    @Transactional
     public Long handle(CreatePlantSamplingSessionCommand command) {
         var session = new PlantSamplingSession(command);
         repository.save(session);
@@ -26,17 +34,20 @@ public class PlantSamplingSessionCommandServiceImpl implements PlantSamplingSess
     }
 
     @Override
-    public Long handle(Long sessionId, AddPlantObservationCommand command) {
+    @Transactional
+    public PlantObservation handle(Long sessionId, AddPlantObservationCommand command) {
         var session = repository.findById(sessionId)
                 .orElseThrow(() -> new IllegalArgumentException("PlantSamplingSession not found"));
 
-        Long obsId = session.addObservation(command);
+        var observation = session.addObservation(command);
 
-        repository.save(session);
-        return obsId;
+        var savedObservation = observationRepository.saveAndFlush(observation);
+        repository.saveAndFlush(session);
+        return savedObservation;
     }
 
     @Override
+    @Transactional
     public void handle(Long sessionId, UpdatePlantObservationCommand command) {
         var session = repository.findById(sessionId)
                 .orElseThrow(() -> new IllegalArgumentException("PlantSamplingSession not found"));
@@ -47,6 +58,7 @@ public class PlantSamplingSessionCommandServiceImpl implements PlantSamplingSess
     }
 
     @Override
+    @Transactional
     public void handle(Long sessionId, RemovePlantObservationCommand command) {
         var session = repository.findById(sessionId)
                 .orElseThrow(() -> new IllegalArgumentException("PlantSamplingSession not found"));

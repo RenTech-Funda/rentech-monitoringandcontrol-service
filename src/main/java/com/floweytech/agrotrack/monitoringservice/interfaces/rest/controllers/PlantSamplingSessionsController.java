@@ -131,20 +131,8 @@ public class PlantSamplingSessionsController {
 
         var command = AddPlantObservationCommandFromResourceAssembler.toCommandFromResource(resource);
 
-        Long observationId = commandService.handle(sessionId, command);
-
-        // Query session to return the new observation
-        var observations = queryService.handle(new GetObservationsBySessionIdQuery(sessionId));
-
-        var createdObs = observations.stream()
-                .filter(o -> o.getId().equals(observationId))
-                .findFirst()
-                .orElse(null);
-
-        if (createdObs == null)
-            return ResponseEntity.badRequest().build();
-
-        var resourceOut = PlantObservationResourceFromEntityAssembler.toResourceFromEntity(createdObs);
+        var observation = commandService.handle(sessionId, command);
+        var resourceOut = PlantObservationResourceFromEntityAssembler.toResourceFromEntity(observation);
 
         return new ResponseEntity<>(resourceOut, HttpStatus.CREATED);
     }

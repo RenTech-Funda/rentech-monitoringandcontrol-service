@@ -19,6 +19,23 @@ public class PlantObservation extends AuditableModel {
     @Getter
     private PlantObservationData plantObservationData;
 
+    @Getter
+    private String imageUrl;
+
+    @Getter
+    private String detectedIssue;
+
+    @Column(length = 1000)
+    @Getter
+    private String aiDiagnosis;
+
+    @Column(length = 1000)
+    @Getter
+    private String aiRecommendation;
+
+    @Getter
+    private Double confidence;
+
     protected PlantObservation() {
         // for JPA
     }
@@ -32,6 +49,21 @@ public class PlantObservation extends AuditableModel {
 
     public void update(PlantObservationData data) {
         applyData(data);
+    }
+
+    public void applyPhotoAnalysis(
+            String imageUrl,
+            String detectedIssue,
+            String aiDiagnosis,
+            String aiRecommendation,
+            Double confidence) {
+        if (imageUrl == null || imageUrl.isBlank())
+            throw new IllegalArgumentException("imageUrl cannot be null or blank");
+        this.imageUrl = imageUrl;
+        this.detectedIssue = detectedIssue;
+        this.aiDiagnosis = aiDiagnosis;
+        this.aiRecommendation = aiRecommendation;
+        this.confidence = confidence;
     }
 
     public void detachFromSession() {

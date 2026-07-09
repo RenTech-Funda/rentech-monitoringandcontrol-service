@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface TaskQueryService {
     List<Task> handle(GetAllTasksQuery query);
     Optional<Task> handle(GetTaskByIdQuery query);
-    List<Task> handle(GetTasksByAssigneeProfileIdQuery query);
-    List<Task> handle(GetTasksByAssignedToProfileIdQuery query);
+    List<Task> handle(GetTasksByCreatedByUserIdQuery query);
+    List<Task> handle(GetTasksByAssignedToUserIdQuery query);
     List<Task> handle(GetTasksByOrganizationIdQuery query);
 }

@@ -54,7 +54,7 @@ public class PlantSamplingSession extends AuditableAbstractAggregateRoot<PlantSa
         ));
     }
 
-    public Long addObservation(AddPlantObservationCommand command) {
+    public PlantObservation addObservation(AddPlantObservationCommand command) {
         var obs = new PlantObservation(this, command.observationData());
         this.observations.add(obs);
 
@@ -66,7 +66,7 @@ public class PlantSamplingSession extends AuditableAbstractAggregateRoot<PlantSa
                 obs.getId()
         ));
 
-        return obs.getId();
+        return obs;
     }
 
 

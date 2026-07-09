@@ -14,9 +14,9 @@ public class CreateTaskCommandFromResourceAssembler {
      * @param resource CreateTaskResource to convert
      * @return CreateTaskCommand created from the resource
      */
-    public static CreateTaskCommand toCommandFromResource(CreateTaskResource resource) {
-        var assigneeProfileId = new ProfileId(resource.assigneeProfileId());
-        var assignedToProfileId = new ProfileId(resource.assignedToProfileId());
+    public static CreateTaskCommand toCommandFromResource(CreateTaskResource resource, Long authenticatedUserId) {
+        var createdByUserId = new UserId(authenticatedUserId);
+        var assignedToUserId = new UserId(resource.assignedToUserId());
         var organizationId = new OrganizationId(resource.organizationId());
         var taskDetails = new TaskDetails(resource.title(), resource.description());
         var dateRange = new DateRange(resource.startDate(), resource.endDate());
@@ -28,8 +28,8 @@ public class CreateTaskCommandFromResourceAssembler {
 
 
         return new CreateTaskCommand(
-                assigneeProfileId,
-                assignedToProfileId,
+                createdByUserId,
+                assignedToUserId,
                 organizationId,
                 taskDetails,
                 dateRange,
@@ -44,9 +44,9 @@ public class CreateTaskCommandFromResourceAssembler {
      * @param resource CreateTaskResource with the updated data
      * @return ModifyTaskCommand created from the taskId and resource
      */
-    public static ModifyTaskCommand toModifyCommandFromResource(Long taskId, CreateTaskResource resource) {
-        var assigneeProfileId = new ProfileId(resource.assigneeProfileId());
-        var assignedToProfileId = new ProfileId(resource.assignedToProfileId());
+    public static ModifyTaskCommand toModifyCommandFromResource(Long taskId, CreateTaskResource resource, Long authenticatedUserId) {
+        var createdByUserId = new UserId(authenticatedUserId);
+        var assignedToUserId = new UserId(resource.assignedToUserId());
         var organizationId = new OrganizationId(resource.organizationId());
         var taskDetails = new TaskDetails(resource.title(), resource.description());
         var dateRange = new DateRange(resource.startDate(), resource.endDate());
@@ -58,8 +58,8 @@ public class CreateTaskCommandFromResourceAssembler {
 
         return new ModifyTaskCommand(
                 taskId,
-                assigneeProfileId,
-                assignedToProfileId,
+                createdByUserId,
+                assignedToUserId,
                 organizationId,
                 taskDetails,
                 dateRange,

@@ -28,13 +28,13 @@ public class TaskQueryServiceImpl implements TaskQueryService {
     }
 
     @Override
-    public List<Task> handle(GetTasksByAssigneeProfileIdQuery query) {
-        return taskRepository.findByAssigneeProfileId_ProfileId(query.assigneeProfileId());
+    public List<Task> handle(GetTasksByCreatedByUserIdQuery query) {
+        return taskRepository.findByCreatedByUserId_UserId(query.createdByUserId());
     }
 
     @Override
-    public List<Task> handle(GetTasksByAssignedToProfileIdQuery query) {
-        return taskRepository.findByAssignedToProfileId_ProfileId(query.assignedToProfileId());
+    public List<Task> handle(GetTasksByAssignedToUserIdQuery query) {
+        return taskRepository.findByAssignedToUserId_UserId(query.assignedToUserId());
     }
 
     @Override

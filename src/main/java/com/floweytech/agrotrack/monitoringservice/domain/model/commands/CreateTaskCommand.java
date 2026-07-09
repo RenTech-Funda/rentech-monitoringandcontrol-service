@@ -5,8 +5,8 @@ import com.floweytech.agrotrack.monitoringservice.domain.model.valueobjects.*;
 import java.util.List;
 
 public record CreateTaskCommand (
-    ProfileId assigneeProfileId,
-    ProfileId assignedToProfileId,
+    UserId createdByUserId,
+    UserId assignedToUserId,
     OrganizationId organizationId,
     TaskDetails taskDetails,
     DateRange dateRange,
@@ -18,10 +18,10 @@ public record CreateTaskCommand (
      * @throws IllegalArgumentException if any of the required fields are null or invalid.
      */
     public CreateTaskCommand {
-        if (assigneeProfileId == null)
-            throw new IllegalArgumentException("assigneeProfileId cannot be null");
-        if (assignedToProfileId == null)
-            throw new IllegalArgumentException("assignedToProfileId cannot be null");
+        if (createdByUserId == null)
+            throw new IllegalArgumentException("createdByUserId cannot be null");
+        if (assignedToUserId == null)
+            throw new IllegalArgumentException("assignedToUserId cannot be null");
         if (organizationId == null)
             throw new IllegalArgumentException("organizationId cannot be null");
         if (taskDetails == null)

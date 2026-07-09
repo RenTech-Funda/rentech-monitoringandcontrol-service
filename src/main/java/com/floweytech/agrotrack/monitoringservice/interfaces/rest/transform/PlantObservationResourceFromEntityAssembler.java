@@ -16,7 +16,12 @@ public class PlantObservationResourceFromEntityAssembler {
                 data.heightCm(),
                 data.leafCount(),
                 data.fruitCount(),
-                data.notes()
+                data.notes(),
+                entity.getImageUrl(),
+                entity.getDetectedIssue(),
+                entity.getAiDiagnosis(),
+                entity.getAiRecommendation(),
+                entity.getConfidence()
         );
     }
 }

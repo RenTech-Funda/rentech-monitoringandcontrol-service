@@ -36,8 +36,8 @@ public class TaskResourceFromEntityAssembler {
 
         return new TaskResource(
                 entity.getId(),
-                entity.getAssigneeProfileId().profileId(),
-                entity.getAssignedToProfileId().profileId(),
+                entity.getCreatedByUserId().userId(),
+                entity.getAssignedToUserId().userId(),
                 entity.getOrganizationId().organizationId(),
                 entity.getTaskDetails().getTaskTitle(),
                 entity.getTaskDetails().getTaskDescription(),

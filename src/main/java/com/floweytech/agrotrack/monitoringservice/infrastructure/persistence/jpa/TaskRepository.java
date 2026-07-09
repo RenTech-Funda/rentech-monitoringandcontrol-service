@@ -9,19 +9,9 @@ import java.util.List;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
-    /**
-     * Find tasks by assignee profile ID (who assigns the task)
-     * @param profileId The assignee profile ID
-     * @return List of tasks
-     */
-    List<Task> findByAssigneeProfileId_ProfileId(Long profileId);
+    List<Task> findByCreatedByUserId_UserId(Long userId);
 
-    /**
-     * Find tasks by assigned to profile ID (who receives the task)
-     * @param profileId The assigned to profile ID
-     * @return List of tasks
-     */
-    List<Task> findByAssignedToProfileId_ProfileId(Long profileId);
+    List<Task> findByAssignedToUserId_UserId(Long userId);
 
     /**
      * Find tasks by organization ID

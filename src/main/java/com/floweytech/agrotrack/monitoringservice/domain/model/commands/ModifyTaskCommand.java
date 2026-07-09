@@ -10,8 +10,8 @@ import java.util.List;
  */
 public record ModifyTaskCommand (
     Long taskId,
-    ProfileId assigneeProfileId,
-    ProfileId assignedToProfileId,
+    UserId createdByUserId,
+    UserId assignedToUserId,
     OrganizationId organizationId,
     TaskDetails taskDetails,
     DateRange dateRange,
@@ -21,10 +21,10 @@ public record ModifyTaskCommand (
     public  ModifyTaskCommand{
         if (taskId == null)
             throw new IllegalArgumentException("taskId cannot be null");
-        if (assigneeProfileId == null)
-            throw new IllegalArgumentException("assigneeProfileId cannot be null");
-        if (assignedToProfileId == null)
-            throw new IllegalArgumentException("assignedToProfileId cannot be null");
+        if (createdByUserId == null)
+            throw new IllegalArgumentException("createdByUserId cannot be null");
+        if (assignedToUserId == null)
+            throw new IllegalArgumentException("assignedToUserId cannot be null");
         if (organizationId == null)
             throw new IllegalArgumentException("organizationId cannot be null");
         if (taskDetails == null)
