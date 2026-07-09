@@ -1,63 +1,57 @@
 package com.floweytech.agrotrack.monitoringservice.application.internal.commandservices;
 
-import com.floweytech.agrotrack.monitoringservice.domain.model.aggregates.PlantSamplingSession;
 import com.floweytech.agrotrack.monitoringservice.domain.model.commands.AddPlantObservationCommand;
 import com.floweytech.agrotrack.monitoringservice.domain.model.commands.CreatePlantSamplingSessionCommand;
 import com.floweytech.agrotrack.monitoringservice.domain.model.commands.RemovePlantObservationCommand;
 import com.floweytech.agrotrack.monitoringservice.domain.model.commands.UpdatePlantObservationCommand;
 import com.floweytech.agrotrack.monitoringservice.domain.services.PlantSamplingSessionCommandService;
-import com.floweytech.agrotrack.monitoringservice.infrastructure.persistence.jpa.PlantSamplingSessionRepository;
+import org.springframework.dao.CannotAcquireLockException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PlantSamplingSessionCommandServiceImpl implements PlantSamplingSessionCommandService {
 
-    private final PlantSamplingSessionRepository repository;
+    private final PlantSamplingSessionAtomicOperations atomicOperations;
 
-    public PlantSamplingSessionCommandServiceImpl(PlantSamplingSessionRepository repository) {
-        this.repository = repository;
+    public PlantSamplingSessionCommandServiceImpl(PlantSamplingSessionAtomicOperations atomicOperations) {
+        this.atomicOperations = atomicOperations;
     }
 
     @Override
-    @Transactional
     public Long handle(CreatePlantSamplingSessionCommand command) {
-        var session = new PlantSamplingSession(command);
-        repository.save(session);
-        return session.getId();
+        return atomicOperations.create(command);
     }
 
     @Override
-    @Transactional
+    @Retryable(
+            retryFor = {CannotAcquireLockException.class, ObjectOptimisticLockingFailureException.class},
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 200, multiplier = 2)
+    )
     public Long handle(Long sessionId, AddPlantObservationCommand command) {
-        var session = repository.findById(sessionId)
-                .orElseThrow(() -> new IllegalArgumentException("PlantSamplingSession not found"));
-
-        Long obsId = session.addObservation(command);
-
-        repository.save(session);
-        return obsId;
+        return atomicOperations.addObservation(sessionId, command);
     }
 
     @Override
-    @Transactional
+    @Retryable(
+            retryFor = {CannotAcquireLockException.class, ObjectOptimisticLockingFailureException.class},
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 200, multiplier = 2)
+    )
     public void handle(Long sessionId, UpdatePlantObservationCommand command) {
-        var session = repository.findById(sessionId)
-                .orElseThrow(() -> new IllegalArgumentException("PlantSamplingSession not found"));
-
-        session.updateObservation(command);
-
-        repository.save(session);
+        atomicOperations.updateObservation(sessionId, command);
     }
 
     @Override
-    @Transactional
+    @Retryable(
+            retryFor = {CannotAcquireLockException.class, ObjectOptimisticLockingFailureException.class},
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 200, multiplier = 2)
+    )
     public void handle(Long sessionId, RemovePlantObservationCommand command) {
-        var session = repository.findById(sessionId)
-                .orElseThrow(() -> new IllegalArgumentException("PlantSamplingSession not found"));
-
-        session.removeObservation(command);
-
-        repository.save(session);
+        atomicOperations.removeObservation(sessionId, command);
     }
 }
