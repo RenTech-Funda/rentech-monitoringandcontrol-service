@@ -5,8 +5,8 @@ import java.util.List;
 
 public record TaskResource(
         Long id,
-        Long assigneeProfileId,
-        Long assignedToProfileId,
+        Long createdByUserId,
+        Long assignedToUserId,
         Long organizationId,
         String title,
         String description,

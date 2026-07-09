@@ -6,8 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record CreateTaskResource(
-        Long assigneeProfileId,
-        Long assignedToProfileId,
+        Long assignedToUserId,
         Long organizationId,
         String title,
         String description,
@@ -21,10 +20,8 @@ public record CreateTaskResource(
      * @throws IllegalArgumentException if any field is invalid.
      */
     public CreateTaskResource {
-        if (assigneeProfileId == null || assigneeProfileId <= 0)
-            throw new IllegalArgumentException("assigneeProfileId cannot be null or less than or equal to zero");
-        if (assignedToProfileId == null || assignedToProfileId <= 0)
-            throw new IllegalArgumentException("assignedToProfileId cannot be null or less than or equal to zero");
+        if (assignedToUserId == null || assignedToUserId <= 0)
+            throw new IllegalArgumentException("assignedToUserId cannot be null or less than or equal to zero");
         if (organizationId == null || organizationId <= 0)
             throw new IllegalArgumentException("organizationId cannot be null or less than or equal to zero");
         if (title == null || title.isBlank())

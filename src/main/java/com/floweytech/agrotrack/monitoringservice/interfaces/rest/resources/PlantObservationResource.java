@@ -5,5 +5,10 @@ public record PlantObservationResource(
         Double heightCm,
         Integer leafCount,
         Integer fruitCount,
-        String notes
+        String notes,
+        String imageUrl,
+        String detectedIssue,
+        String aiDiagnosis,
+        String aiRecommendation,
+        Double confidence
 ) {}

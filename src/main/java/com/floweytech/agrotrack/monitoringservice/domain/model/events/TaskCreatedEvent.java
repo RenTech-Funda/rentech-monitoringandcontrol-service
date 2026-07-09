@@ -9,8 +9,8 @@ import java.util.List;
 @Getter
 public class TaskCreatedEvent extends ApplicationEvent {
     private final Long taskId;
-    private final ProfileId assigneeProfileId;
-    private final ProfileId assignedToProfileId;
+    private final UserId createdByUserId;
+    private final UserId assignedToUserId;
     private final OrganizationId organizationId;
     private final TaskDetails taskDetails;
     private final DateRange dateRange;
@@ -21,8 +21,8 @@ public class TaskCreatedEvent extends ApplicationEvent {
      * Constructor for TaskCreatedEvent.
      * @param taskId The ID of the created task
      * @param source The source aggregate that published this event
-     * @param assigneeProfileId The profile who assigns the task
-     * @param assignedToProfileId The profile to which the task was assigned
+     * @param createdByUserId The user who created the task
+     * @param assignedToUserId The user to which the task was assigned
      * @param organizationId The organization ID
      * @param taskDetails The title and description of the task
      * @param dateRange The execution date range
@@ -32,8 +32,8 @@ public class TaskCreatedEvent extends ApplicationEvent {
     public TaskCreatedEvent(
             Object source,
             Long taskId,
-            ProfileId assigneeProfileId,
-            ProfileId assignedToProfileId,
+            UserId createdByUserId,
+            UserId assignedToUserId,
             OrganizationId organizationId,
             TaskDetails taskDetails,
             DateRange dateRange,
@@ -42,8 +42,8 @@ public class TaskCreatedEvent extends ApplicationEvent {
     ){
         super(source);
         this.taskId = taskId;
-        this.assigneeProfileId = assigneeProfileId;
-        this.assignedToProfileId = assignedToProfileId;
+        this.createdByUserId = createdByUserId;
+        this.assignedToUserId = assignedToUserId;
         this.organizationId = organizationId;
         this.taskDetails = taskDetails;
         this.dateRange = dateRange;

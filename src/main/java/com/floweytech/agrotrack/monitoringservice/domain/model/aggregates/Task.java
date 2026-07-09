@@ -19,14 +19,14 @@ import java.util.List;
 public class Task extends AuditableAbstractAggregateRoot<Task> {
 
     @Embedded
-    @AttributeOverride(name = "profileId", column = @Column(name = "assignee_profile_id"))
+    @AttributeOverride(name = "userId", column = @Column(name = "created_by_user_id"))
     @Getter
-    private ProfileId assigneeProfileId;
+    private UserId createdByUserId;
 
     @Embedded
-    @AttributeOverride(name = "profileId", column = @Column(name = "assigned_to_profile_id"))
+    @AttributeOverride(name = "userId", column = @Column(name = "assigned_to_user_id"))
     @Getter
-    private ProfileId assignedToProfileId;
+    private UserId assignedToUserId;
 
     @Embedded
     @AttributeOverride(name = "organizationId", column = @Column(name = "organization_id"))
@@ -58,8 +58,8 @@ public class Task extends AuditableAbstractAggregateRoot<Task> {
     protected Task() {}
 
     public Task(CreateTaskCommand command) {
-        this.assigneeProfileId = command.assigneeProfileId();
-        this.assignedToProfileId = command.assignedToProfileId();
+        this.createdByUserId = command.createdByUserId();
+        this.assignedToUserId = command.assignedToUserId();
         this.organizationId = command.organizationId();
         this.taskDetails = command.taskDetails();
         this.dateRange = command.dateRange();
@@ -69,8 +69,8 @@ public class Task extends AuditableAbstractAggregateRoot<Task> {
         this.registerEvent(new TaskCreatedEvent(
                 this,
                 this.getId(),
-                this.assigneeProfileId,
-                this.assignedToProfileId,
+                this.createdByUserId,
+                this.assignedToUserId,
                 this.organizationId,
                 this.taskDetails,
                 this.dateRange,
@@ -87,8 +87,8 @@ public class Task extends AuditableAbstractAggregateRoot<Task> {
      */
     public void applyTaskModification(ModifyTaskCommand command){
 
-        this.assigneeProfileId = command.assigneeProfileId();
-        this.assignedToProfileId = command.assignedToProfileId();
+        this.createdByUserId = command.createdByUserId();
+        this.assignedToUserId = command.assignedToUserId();
         this.organizationId = command.organizationId();
         this.taskDetails = command.taskDetails();
         this.dateRange = command.dateRange();
@@ -98,8 +98,8 @@ public class Task extends AuditableAbstractAggregateRoot<Task> {
         this.registerEvent(new TaskModifiedEvent(
                 this,
                 this.getId(),
-                this.assigneeProfileId,
-                this.assignedToProfileId,
+                this.createdByUserId,
+                this.assignedToUserId,
                 this.organizationId,
                 this.taskDetails,
                 this.dateRange,
@@ -116,20 +116,12 @@ public class Task extends AuditableAbstractAggregateRoot<Task> {
         ));
     }
 
-    /**
-     * Sets the assignee profile ID (who assigns the task).
-     * @param assigneeProfileId The profile ID of the assignee
-     */
-    public void setAssigneeProfileId(ProfileId assigneeProfileId) {
-        this.assigneeProfileId = assigneeProfileId;
+    public void setCreatedByUserId(UserId createdByUserId) {
+        this.createdByUserId = createdByUserId;
     }
 
-    /**
-     * Sets the assigned to profile ID (who receives the task).
-     * @param assignedToProfileId The profile ID of the assigned person
-     */
-    public void setAssignedToProfileId(ProfileId assignedToProfileId) {
-        this.assignedToProfileId = assignedToProfileId;
+    public void setAssignedToUserId(UserId assignedToUserId) {
+        this.assignedToUserId = assignedToUserId;
     }
 
     /**
