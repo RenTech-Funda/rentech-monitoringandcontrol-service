@@ -24,6 +24,9 @@ public class AuditableAbstractAggregateRoot<T extends AbstractAggregateRoot<T>> 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Version
+    private Long version;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

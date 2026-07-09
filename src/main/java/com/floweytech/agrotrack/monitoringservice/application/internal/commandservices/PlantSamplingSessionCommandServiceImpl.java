@@ -8,6 +8,7 @@ import com.floweytech.agrotrack.monitoringservice.domain.model.commands.UpdatePl
 import com.floweytech.agrotrack.monitoringservice.domain.services.PlantSamplingSessionCommandService;
 import com.floweytech.agrotrack.monitoringservice.infrastructure.persistence.jpa.PlantSamplingSessionRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PlantSamplingSessionCommandServiceImpl implements PlantSamplingSessionCommandService {
@@ -19,6 +20,7 @@ public class PlantSamplingSessionCommandServiceImpl implements PlantSamplingSess
     }
 
     @Override
+    @Transactional
     public Long handle(CreatePlantSamplingSessionCommand command) {
         var session = new PlantSamplingSession(command);
         repository.save(session);
@@ -26,6 +28,7 @@ public class PlantSamplingSessionCommandServiceImpl implements PlantSamplingSess
     }
 
     @Override
+    @Transactional
     public Long handle(Long sessionId, AddPlantObservationCommand command) {
         var session = repository.findById(sessionId)
                 .orElseThrow(() -> new IllegalArgumentException("PlantSamplingSession not found"));
@@ -37,6 +40,7 @@ public class PlantSamplingSessionCommandServiceImpl implements PlantSamplingSess
     }
 
     @Override
+    @Transactional
     public void handle(Long sessionId, UpdatePlantObservationCommand command) {
         var session = repository.findById(sessionId)
                 .orElseThrow(() -> new IllegalArgumentException("PlantSamplingSession not found"));
@@ -47,6 +51,7 @@ public class PlantSamplingSessionCommandServiceImpl implements PlantSamplingSess
     }
 
     @Override
+    @Transactional
     public void handle(Long sessionId, RemovePlantObservationCommand command) {
         var session = repository.findById(sessionId)
                 .orElseThrow(() -> new IllegalArgumentException("PlantSamplingSession not found"));
