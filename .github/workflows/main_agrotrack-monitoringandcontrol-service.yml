@@ -12,9 +12,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     permissions:
-      contents: read
+      contents: read #This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
@@ -26,43 +25,39 @@ jobs:
           distribution: 'microsoft'
 
       - name: Build with Maven
-        run: mvn clean package -DskipTests
+        run: mvn clean install
 
-      - name: Upload artifact
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: target/*.jar
-
+          path: '${{ github.workspace }}/target/*.jar'
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
-
     permissions:
-      id-token: write
-      contents: read
-
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
+  
     steps:
-
-      - name: Download artifact
+      - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: java-app
-
-
+      
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_216E87CDAD7D4C159297A48223EBC3B7 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A01830BD47D14AC78309F2B93F62B840 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_95989A80D9794CB2931007357403295A }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_FFE5AE90629B4D2EB70DB409EC8A9A1A }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_55809E0423874F518458E505B4991C4D }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_3C2DA0645CE24A2DBC262DB01166E9EB }}
 
-
-      - name: Deploy
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: agrotrack-monitoringandcontrol-service
-          slot-name: Production
+          app-name: 'agrotrack-monitoringandcontrol-service'
+          slot-name: 'Production'
           package: '*.jar'
           
